@@ -5,7 +5,9 @@ from database import get_db
 from app.schemas.product import ProductCreate, ProductUpdate, ProductRead
 from app.services import product_services
 
-router = APIRouter(prefix="/products", tags=["Products"])
+router = APIRouter(
+    prefix="/products",
+    tags=["Products"],)
 
 
 @router.get("/", response_model=list[ProductRead])

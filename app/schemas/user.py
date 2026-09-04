@@ -28,4 +28,14 @@ class UserRead(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
     user_id: int
+    is_active: bool
     created_at: datetime
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None

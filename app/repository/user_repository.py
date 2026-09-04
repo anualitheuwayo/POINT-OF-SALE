@@ -6,7 +6,7 @@ class UserRepository:
     def __init__(self):
         self.model = User
 
-    def get(self, db: Session, id: int):
+    def get_by_id(self, db: Session, id: int):
         return db.get(self.model, id)
 
     def get_all(self, db: Session):
