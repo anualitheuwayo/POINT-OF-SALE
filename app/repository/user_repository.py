@@ -9,6 +9,9 @@ class UserRepository:
     def get_by_id(self, db: Session, id: int):
         return db.get(self.model, id)
 
+    def get(self, db: Session, id: int):
+        return db.get(self.model, id)
+
     def get_all(self, db: Session):
         return db.query(self.model).all()
 

@@ -16,6 +16,10 @@ def get_receipt(db: Session, id: int):
     return receipt
 
 
+def get_receipts_by_sale(db: Session, sale_id: int):
+    return receipt_repository.get_by_sale_id(db, sale_id)
+
+
 def list_receipts(db: Session):
     return receipt_repository.get_all(db)
 

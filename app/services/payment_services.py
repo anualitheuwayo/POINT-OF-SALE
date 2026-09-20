@@ -13,6 +13,10 @@ def get_payment(db: Session, id: int):
     return payment
 
 
+def get_payments_by_sale(db: Session, sale_id: int):
+    return payment_repository.get_by_sale_id(db, sale_id)
+
+
 def list_payments(db: Session):
     return payment_repository.get_all(db)
 

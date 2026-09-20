@@ -1,11 +1,4 @@
-from fastapi.testclient import TestClient
-from main import app
-
-client = TestClient(app)
-
-def test_home():
+def test_home(client):
     response = client.get("/")
-    print(response.json())
-    print(response.status_code)
-    print(response.headers)
-    
+    assert response.status_code == 200
+    assert response.json() == {"message": "POS API is running"}

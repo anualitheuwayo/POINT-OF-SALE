@@ -4,6 +4,8 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.sale import Sale
+from app.models.sale_item import SaleItem
+from app.models.payment import Payment
 from app.repository.sale_repository import sale_repository
 from app.repository.product_repository import product_repository
 from app.repository.user_repository import user_repository
@@ -123,11 +125,9 @@ def create_sale(db: Session, data: SaleCreate):
     db.add(sale)
     db.flush()
     
-    from models.sale_item import SaleItem
     for item in built_items:
         db.add(SaleItem(sale_id=sale.sale_id, **item))
 
-    from models.payment import Payment
     for payment in payments_data:
         db.add(Payment(
             sale_id=sale.sale_id,

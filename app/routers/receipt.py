@@ -18,6 +18,11 @@ def get_receipt(receipt_id: int, db: Session = Depends(get_db)):
     return receipt_services.get_receipt(db, receipt_id)
 
 
+@router.get("/sale/{sale_id}", response_model=list[ReceiptRead])
+def get_receipts_by_sale(sale_id: int, db: Session = Depends(get_db)):
+    return receipt_services.get_receipts_by_sale(db, sale_id)
+
+
 @router.post("/sale/{sale_id}", response_model=ReceiptRead, status_code=status.HTTP_201_CREATED)
 def issue_receipt(sale_id: int, data: ReceiptCreate, db: Session = Depends(get_db)):
     return receipt_services.issue_receipt(db, sale_id, data)

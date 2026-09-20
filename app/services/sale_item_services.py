@@ -14,6 +14,10 @@ def get_sale_item(db: Session, id: int):
     return sale_item
 
 
+def get_sale_items_by_sale(db: Session, sale_id: int):
+    return sale_item_repository.get_by_sale_id(db, sale_id)
+
+
 def list_sale_items(db: Session):
     return sale_item_repository.get_all(db)
 

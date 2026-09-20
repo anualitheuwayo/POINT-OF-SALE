@@ -169,5 +169,4 @@ Tests cover:
 - Database credentials are stored in a `.env` file, excluded from version control via `.gitignore`.
 
 ## Author
-
-Adeline Mugisha# POS
+Anulithe uwayo POS

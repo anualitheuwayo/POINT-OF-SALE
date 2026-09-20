@@ -12,6 +12,9 @@ class PaymentRepository:
     def get_all(self, db: Session):
         return db.query(self.model).all()
 
+    def get_by_sale_id(self, db: Session, sale_id: int):
+        return db.query(self.model).filter(self.model.sale_id == sale_id).all()
+
     def create(self, db: Session, data: dict):
         payment = self.model(**data)
         db.add(payment)

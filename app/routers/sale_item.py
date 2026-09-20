@@ -18,6 +18,11 @@ def get_sale_item(sale_item_id: int, db: Session = Depends(get_db)):
     return sale_item_services.get_sale_item(db, sale_item_id)
 
 
+@router.get("/sale/{sale_id}", response_model=list[SaleItemRead])
+def get_sale_items_by_sale(sale_id: int, db: Session = Depends(get_db)):
+    return sale_item_services.get_sale_items_by_sale(db, sale_id)
+
+
 @router.post("/sale/{sale_id}", response_model=SaleItemRead, status_code=status.HTTP_201_CREATED)
 def create_sale_item(sale_id: int, data: SaleItemCreate, db: Session = Depends(get_db)):
     return sale_item_services.create_sale_item(db, sale_id, data)

@@ -53,6 +53,4 @@ def update_product(db: Session, product_id: int, data: ProductUpdate):
 
 def delete_product(db: Session, product_id: int):
     product = get_product(db, product_id)
-    # check permissions
-    # check policies
     product_repository.delete(db, product)

@@ -18,6 +18,11 @@ def get_payment(payment_id: int, db: Session = Depends(get_db)):
     return payment_services.get_payment(db, payment_id)
 
 
+@router.get("/sale/{sale_id}", response_model=list[PaymentRead])
+def get_payments_by_sale(sale_id: int, db: Session = Depends(get_db)):
+    return payment_services.get_payments_by_sale(db, sale_id)
+
+
 @router.post("/sale/{sale_id}", response_model=PaymentRead, status_code=status.HTTP_201_CREATED)
 def create_payment(sale_id: int, data: PaymentCreate, db: Session = Depends(get_db)):
     return payment_services.create_payment(db, sale_id, data)
