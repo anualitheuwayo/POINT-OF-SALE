@@ -1,4 +1,18 @@
 import os
+import sys
+import importlib
+
+# Add parent directory to path so we can import database and main
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Now import the modules after path is set
+database = importlib.import_module("database")
+main = importlib.import_module("main")
+
+Base = database.Base
+get_db = database.get_db
+app = main.app
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,9 +21,6 @@ from sqlalchemy.pool import StaticPool
 
 os.environ["TESTING"] = "true"
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-
-from database import Base, get_db
-from main import app
 
 engine = create_engine(
     "sqlite:///:memory:",

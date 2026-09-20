@@ -160,8 +160,7 @@ The test suite uses **pytest** with an **in-memory SQLite database** for complet
 # 1. Install test dependencies (one-time)
 pip install pytest pytest-asyncio httpx
 
-# 2. Run the full test suite
-cd app
+# 2. Run the full test suite (from project root)
 python -m pytest -v
 ```
 
