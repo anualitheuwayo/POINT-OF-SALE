@@ -31,3 +31,8 @@ def issue_receipt(sale_id: int, data: ReceiptCreate, db: Session = Depends(get_d
 @router.put("/{receipt_id}", response_model=ReceiptRead)
 def update_receipt(receipt_id: int, data: ReceiptUpdate, db: Session = Depends(get_db)):
     return receipt_services.update_receipt(db, receipt_id, data)
+
+
+@router.delete("/{receipt_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_receipt(receipt_id: int, db: Session = Depends(get_db)):
+    receipt_services.delete_receipt(db, receipt_id)

@@ -21,6 +21,15 @@ def create_user(db: Session, data: UserCreate):
     user_data = data.model_dump()
     plain_password = user_data.pop("password")
     user_data["password_hash"] = hash_password(plain_password)
+
+    # Check for duplicate username
+    existing = db.query(user_repository.model).filter(user_repository.model.username == user_data["username"]).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"User with username {user_data['username']} already exists",
+        )
+
     return user_repository.create(db, user_data)
 
 

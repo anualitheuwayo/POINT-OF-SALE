@@ -72,3 +72,30 @@ def test_delete_customer(client):
 
     get_response = client.get(f"/customers/{customer_id}")
     assert get_response.status_code == 404
+
+
+def test_get_nonexistent_customer(client):
+    response = client.get("/customers/99999")
+    assert response.status_code == 404
+
+
+def test_create_customer_missing_required_fields(client):
+    response = client.post("/customers", json={"phone": "555-0000"})
+    assert response.status_code == 422
+
+
+def test_create_customer_invalid_email(client):
+    response = client.post("/customers", json={
+        "full_name": "Test", "phone": "555-0000", "email": "invalid-email"
+    })
+    assert response.status_code == 422
+
+
+def test_update_nonexistent_customer(client):
+    response = client.put("/customers/99999", json={"full_name": "Updated"})
+    assert response.status_code == 404
+
+
+def test_delete_nonexistent_customer(client):
+    response = client.delete("/customers/99999")
+    assert response.status_code == 404

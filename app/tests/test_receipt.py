@@ -1,9 +1,7 @@
 def setup_test_data(client):
-   
     cat_response = client.post("/categories", json={"name": "Test Category", "description": "Test", "is_active": True})
     category_id = cat_response.json()["category_id"]
 
-  
     sup_response = client.post("/suppliers", json={"company_name": "Test Supplier", "email": "test@supplier.com", "is_active": True})
     supplier_id = sup_response.json()["supplier_id"]
 
@@ -75,10 +73,63 @@ def test_get_receipt(client):
 def test_get_receipts_by_sale(client):
     sale_id = setup_test_data(client)
 
-  
     client.post(f"/receipts/sale/{sale_id}", json={"copy_type": "Original"})
 
     response = client.get(f"/receipts/sale/{sale_id}")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
     assert len(response.json()) == 1
+
+
+def test_get_nonexistent_receipt(client):
+    response = client.get("/receipts/99999")
+    assert response.status_code == 404
+
+
+def test_get_receipts_for_nonexistent_sale(client):
+    response = client.get("/receipts/sale/99999")
+    assert response.status_code == 404
+
+
+def test_create_receipt_invalid_sale(client):
+    receipt_data = {"copy_type": "Original"}
+    response = client.post("/receipts/sale/99999", json=receipt_data)
+    assert response.status_code == 404
+
+
+def test_update_receipt(client):
+    sale_id = setup_test_data(client)
+
+    create_response = client.post(f"/receipts/sale/{sale_id}", json={"copy_type": "Original"})
+    assert create_response.status_code == 201
+    receipt_id = create_response.json()["receipt_id"]
+
+    update_data = {"print_status": "Reprinted", "copy_type": "Duplicate"}
+    response = client.put(f"/receipts/{receipt_id}", json=update_data)
+    assert response.status_code == 200
+    assert response.json()["print_status"] == "Reprinted"
+    assert response.json()["copy_type"] == "Duplicate"
+
+
+def test_update_nonexistent_receipt(client):
+    response = client.put("/receipts/99999", json={"print_status": "Reprinted"})
+    assert response.status_code == 404
+
+
+def test_delete_receipt(client):
+    sale_id = setup_test_data(client)
+
+    create_response = client.post(f"/receipts/sale/{sale_id}", json={"copy_type": "Original"})
+    assert create_response.status_code == 201
+    receipt_id = create_response.json()["receipt_id"]
+
+    response = client.delete(f"/receipts/{receipt_id}")
+    assert response.status_code == 204
+
+    get_response = client.get(f"/receipts/{receipt_id}")
+    assert get_response.status_code == 404
+
+
+def test_delete_nonexistent_receipt(client):
+    response = client.delete("/receipts/99999")
+    assert response.status_code == 404

@@ -49,3 +49,28 @@ def test_delete_category(client):
 
     get_response = client.get(f"/categories/{category_id}")
     assert get_response.status_code == 404
+
+
+def test_get_nonexistent_category(client):
+    response = client.get("/categories/99999")
+    assert response.status_code == 404
+
+
+def test_create_category_missing_required_fields(client):
+    response = client.post("/categories", json={"description": "Missing name"})
+    assert response.status_code == 422
+
+
+def test_create_category_invalid_is_active(client):
+    response = client.post("/categories", json={"name": "Test", "description": "Test", "is_active": "not-a-bool"})
+    assert response.status_code == 422
+
+
+def test_update_nonexistent_category(client):
+    response = client.put("/categories/99999", json={"name": "Updated"})
+    assert response.status_code == 404
+
+
+def test_delete_nonexistent_category(client):
+    response = client.delete("/categories/99999")
+    assert response.status_code == 404

@@ -5,7 +5,6 @@ def setup_test_data(client):
     sup_response = client.post("/suppliers", json={"company_name": "Test Supplier", "email": "test@supplier.com", "is_active": True})
     supplier_id = sup_response.json()["supplier_id"]
 
-  
     prod_response = client.post("/products", json={
         "sku": f"TEST-{category_id}-{supplier_id}",
         "name": "Test Product",
@@ -68,3 +67,29 @@ def test_update_payment(client):
     assert response.status_code == 200
     assert response.json()["status"] == "Refunded"
     assert response.json()["transaction_ref"] == "REF-12345"
+
+
+def test_get_nonexistent_payment(client):
+    response = client.get("/payments/99999")
+    assert response.status_code == 404
+
+
+def test_get_payments_for_nonexistent_sale(client):
+    response = client.get("/payments/sale/99999")
+    assert response.status_code == 404
+
+
+def test_update_nonexistent_payment(client):
+    response = client.put("/payments/99999", json={"status": "Refunded"})
+    assert response.status_code == 404
+
+
+def test_create_payment_invalid_sale(client):
+    payment_data = {"payment_method": "Card", "amount": "10.00"}
+    response = client.post("/payments/sale/99999", json=payment_data)
+    assert response.status_code == 404
+
+
+def test_create_payment_missing_fields(client):
+    response = client.post("/payments/sale/1", json={"amount": "10.00"})
+    assert response.status_code == 422

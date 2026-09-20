@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class CustomerBase(BaseModel):
     full_name: str
     phone: str | None = None
-    email: str | None = None
+    email: EmailStr | None = None
     loyalty_points: int | None = 0
     is_walk_in: bool = False
 

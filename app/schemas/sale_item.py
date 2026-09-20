@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class SaleItemBase(BaseModel):
@@ -16,10 +16,24 @@ class SaleItemCreate(BaseModel):
     quantity: int
     line_discount: Decimal | None = 0
 
+    @field_validator("quantity")
+    @classmethod
+    def quantity_must_be_positive(cls, v: int) -> int:
+        if v <= 0:
+            raise ValueError("Quantity must be positive")
+        return v
+
 
 class SaleItemUpdate(BaseModel):
     quantity: int | None = None
     line_discount: Decimal | None = None
+
+    @field_validator("quantity")
+    @classmethod
+    def quantity_must_be_positive(cls, v: int | None) -> int | None:
+        if v is not None and v <= 0:
+            raise ValueError("Quantity must be positive")
+        return v
 
 
 class SaleItemRead(SaleItemBase):

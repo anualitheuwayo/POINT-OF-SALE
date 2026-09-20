@@ -34,6 +34,14 @@ def create_product(db: Session, data: ProductCreate):
                 detail=f"Supplier {payload['supplier_id']} does not exist",
             )
 
+    # Check for duplicate SKU
+    existing = db.query(product_repository.model).filter(product_repository.model.sku == payload["sku"]).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Product with SKU {payload['sku']} already exists",
+        )
+
     return product_repository.create(db, payload)
 
 

@@ -78,3 +78,54 @@ def test_delete_user(client):
 
     get_response = client.get(f"/users/{user_id}")
     assert get_response.status_code == 404
+
+
+def test_get_nonexistent_user(client):
+    response = client.get("/users/99999")
+    assert response.status_code == 404
+
+
+def test_create_user_missing_required_fields(client):
+    response = client.post("/users", json={"username": "missing_fields"})
+    assert response.status_code == 422
+
+
+def test_create_user_duplicate_username(client):
+    user_data = {
+        "full_name": "User 1",
+        "username": "duplicate",
+        "role": "cashier",
+        "email": "user1@example.com",
+        "is_active": True,
+        "password": "password123",
+    }
+    resp1 = client.post("/users", json=user_data)
+    assert resp1.status_code == 201
+
+    user_data["email"] = "user2@example.com"
+    user_data["full_name"] = "User 2"
+    resp2 = client.post("/users", json=user_data)
+    assert resp2.status_code == 400
+
+
+def test_create_user_invalid_email(client):
+    user_data = {
+        "full_name": "Test",
+        "username": "testuser",
+        "role": "cashier",
+        "email": "invalid-email",
+        "is_active": True,
+        "password": "password123",
+    }
+    response = client.post("/users", json=user_data)
+    assert response.status_code == 422
+
+
+def test_update_nonexistent_user(client):
+    response = client.put("/users/99999", json={"full_name": "Updated"})
+    assert response.status_code == 404
+
+
+def test_delete_nonexistent_user(client):
+    response = client.delete("/users/99999")
+    assert response.status_code == 404

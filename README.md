@@ -152,15 +152,53 @@ All endpoints support standard REST operations (`GET`, `POST`, `PUT`, `DELETE`) 
 
 ## Running Tests
 
-Manual tests via postman or the swagger UI
+### Local Test Execution
 
+The test suite uses **pytest** with an **in-memory SQLite database** for complete isolation from the PostgreSQL development database.
 
-Tests cover:
-- Successful record creation, retrieval, update, and deletion for every entity
-- 404 responses for non-existent IDs
-- 400/422 responses for invalid or incomplete data
-- Rejection of records referencing non-existent related entities (e.g. a sale item pointing at a product that doesn't exist)
-- The full sale checkout flow, including stock deduction and split-payment validation
+```bash
+# 1. Install test dependencies (one-time)
+pip install pytest pytest-asyncio httpx
+
+# 2. Run the full test suite
+cd app
+python -m pytest -v
+```
+
+**Options:**
+- `python -m pytest -v` — Verbose output
+- `python -m pytest -x` — Stop on first failure
+- `python -m pytest --tb=short` — Shorter tracebacks
+- `python -m pytest app/tests/test_product.py` — Run specific test file
+- `python -m pytest -k "test_create"` — Run tests matching pattern
+
+### Test Coverage
+
+The 95 automated tests cover:
+
+| Area | Tests | Description |
+|------|-------|-------------|
+| **Categories** | 10 | CRUD + 404/422 validation |
+| **Suppliers** | 10 | CRUD + email validation + 404/422 |
+| **Products** | 11 | CRUD + duplicate SKU + FK validation + 404/422 |
+| **Customers** | 10 | CRUD + email validation + 404/422 |
+| **Users** | 11 | CRUD + duplicate username + email validation + 404/422 |
+| **Sales** | 12 | CRUD + checkout flow (stock, payments, discounts) + 404/400 |
+| **Sale Items** | 9 | CRUD + sale-scoped queries + quantity validation |
+| **Payments** | 8 | List + sale-scoped + update + 404/422 |
+| **Receipts** | 10 | CRUD + sale-scoped + 404/422 |
+| **Security** | 2 | Password hashing & verification |
+| **Health** | 1 | Root endpoint |
+
+**Total: 95 tests**
+
+All tests verify:
+- ✅ Successful record creation, retrieval, update, and deletion
+- ✅ 404 responses for non-existent resources
+- ✅ 422 validation errors for invalid/missing fields
+- ✅ 400 business rule errors (duplicate SKUs, usernames, insufficient stock, payment mismatch)
+- ✅ Rejection of records referencing non-existent related entities
+- ✅ Full sale checkout flow (stock deduction, split-payment validation, receipt issuance)
 
 ## Security Notes
 

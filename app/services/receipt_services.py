@@ -17,6 +17,8 @@ def get_receipt(db: Session, id: int):
 
 
 def get_receipts_by_sale(db: Session, sale_id: int):
+    if not sale_repository.get(db, sale_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sale not found")
     return receipt_repository.get_by_sale_id(db, sale_id)
 
 
@@ -45,3 +47,8 @@ def issue_receipt(db: Session, sale_id: int, data: ReceiptCreate):
 def update_receipt(db: Session, receipt_id: int, data: ReceiptUpdate):
     receipt = get_receipt(db, receipt_id)
     return receipt_repository.update(db, receipt, data.model_dump(exclude_unset=True))
+
+
+def delete_receipt(db: Session, receipt_id: int):
+    receipt = get_receipt(db, receipt_id)
+    receipt_repository.delete(db, receipt)

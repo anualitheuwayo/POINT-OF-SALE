@@ -77,3 +77,30 @@ def test_delete_supplier(client):
 
     get_response = client.get(f"/suppliers/{supplier_id}")
     assert get_response.status_code == 404
+
+
+def test_get_nonexistent_supplier(client):
+    response = client.get("/suppliers/99999")
+    assert response.status_code == 404
+
+
+def test_create_supplier_missing_required_fields(client):
+    response = client.post("/suppliers", json={"contact_name": "Missing company"})
+    assert response.status_code == 422
+
+
+def test_create_supplier_invalid_email(client):
+    response = client.post("/suppliers", json={
+        "company_name": "Test", "email": "invalid-email", "is_active": True
+    })
+    assert response.status_code == 422
+
+
+def test_update_nonexistent_supplier(client):
+    response = client.put("/suppliers/99999", json={"company_name": "Updated"})
+    assert response.status_code == 404
+
+
+def test_delete_nonexistent_supplier(client):
+    response = client.delete("/suppliers/99999")
+    assert response.status_code == 404

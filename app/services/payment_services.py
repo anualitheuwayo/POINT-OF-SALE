@@ -14,6 +14,8 @@ def get_payment(db: Session, id: int):
 
 
 def get_payments_by_sale(db: Session, sale_id: int):
+    if not sale_repository.get(db, sale_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sale not found")
     return payment_repository.get_by_sale_id(db, sale_id)
 
 

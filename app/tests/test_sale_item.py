@@ -1,12 +1,10 @@
 def setup_test_data(client):
-   
     cat_response = client.post("/categories", json={"name": "Test Category", "description": "Test", "is_active": True})
     category_id = cat_response.json()["category_id"]
 
     sup_response = client.post("/suppliers", json={"company_name": "Test Supplier", "email": "test@supplier.com", "is_active": True})
     supplier_id = sup_response.json()["supplier_id"]
 
-  
     prod_response = client.post("/products", json={
         "sku": f"TEST-{category_id}-{supplier_id}",
         "name": "Test Product",
@@ -64,9 +62,53 @@ def test_update_sale_item(client):
     assert items_response.status_code == 200
     sale_item_id = items_response.json()[0]["sale_item_id"]
 
-    
     update_data = {"quantity": 3, "line_discount": "1.00"}
     response = client.put(f"/sale-items/{sale_item_id}", json=update_data)
     assert response.status_code == 200
     assert response.json()["quantity"] == 3
     assert response.json()["line_discount"] == "1.00"
+
+
+def test_get_nonexistent_sale_item(client):
+    response = client.get("/sale-items/99999")
+    assert response.status_code == 404
+
+
+def test_get_sale_items_for_nonexistent_sale(client):
+    response = client.get("/sale-items/sale/99999")
+    assert response.status_code == 404
+
+
+def test_update_nonexistent_sale_item(client):
+    response = client.put("/sale-items/99999", json={"quantity": 5})
+    assert response.status_code == 404
+
+
+def test_delete_sale_item(client):
+    sale_id, product_id = setup_test_data(client)
+
+    items_response = client.get(f"/sale-items/sale/{sale_id}")
+    assert items_response.status_code == 200
+    sale_item_id = items_response.json()[0]["sale_item_id"]
+
+    response = client.delete(f"/sale-items/{sale_item_id}")
+    assert response.status_code == 204
+
+    get_response = client.get(f"/sale-items/{sale_item_id}")
+    assert get_response.status_code == 404
+
+
+def test_delete_nonexistent_sale_item(client):
+    response = client.delete("/sale-items/99999")
+    assert response.status_code == 404
+
+
+def test_update_sale_item_invalid_quantity(client):
+    sale_id, product_id = setup_test_data(client)
+
+    items_response = client.get(f"/sale-items/sale/{sale_id}")
+    sale_item_id = items_response.json()[0]["sale_item_id"]
+
+    update_data = {"quantity": -1}
+    response = client.put(f"/sale-items/{sale_item_id}", json=update_data)
+    assert response.status_code == 422
